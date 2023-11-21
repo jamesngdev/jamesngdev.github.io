@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+          integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+            integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <title>Chuyên đề 1</title>
+</head>
+<body>
+<div class="container">
+
+    <h3 style="margin-top: 20px; text-align: left;">Chuyên đề 1</h3>
+    <br/>
+    <p>Ma trận</p>
+    <div class="" style="display: flex; flex-direction: column; gap: 2px;">
+        <div class="x">
+            <input type="number" id="11" value="7"/>
+            <input type="number" id="12" value="5"/>
+            <input type="number" id="13" value="1"/>
+            <input type="number" id="14" value="2"/>
+            <input type="number" id="15" value="1"/>
+        </div>
+        <div class="x">
+            <input type="number" id="21" value="4"/>
+            <input type="number" id="22" value="5"/>
+            <input type="number" id="23" value="7"/>
+            <input type="number" id="24" value="3"/>
+            <input type="number" id="25" value="5"/>
+        </div>
+        <div class="x">
+            <input type="number" id="31" value="4"/>
+            <input type="number" id="32" value="3"/>
+            <input type="number" id="33" value="7"/>
+            <input type="number" id="34" value="5"/>
+            <input type="number" id="35" value="4"/>
+        </div>
+        <div class="x">
+            <input type="number" id="41" value="2"/>
+            <input type="number" id="42" value="3"/>
+            <input type="number" id="43" value="6"/>
+            <input type="number" id="44" value="1"/>
+            <input type="number" id="45" value="6"/>
+        </div>
+        <div class="x">
+            <input type="number" id="51" value="4"/>
+            <input type="number" id="52" value="7"/>
+            <input type="number" id="53" value="1"/>
+            <input type="number" id="54" value="6"/>
+            <input type="number" id="55" value="6"/>
+        </div>
+
+    </div>
+
+    <hr/>
+
+    <br/>
+<!--    <p>G(x)=</p>-->
+    <!--    <div class="x">-->
+    <!--        <input type="number" id="gx11" value="1"/>-->
+    <!--        <input type="number" id="gx12" value="0"/>-->
+    <!--        <input type="number" id="gx13" value="-1"/>-->
+    <!--        <br/>-->
+    <!--        <input type="number" id="gx21" value="2"/>-->
+    <!--        <input type="number" id="gx22" value="0"/>-->
+    <!--        <input type="number" id="gx23" value="-2"/>-->
+    <!--        <br/>-->
+    <!--        <input type="number" id="gx31" value="1"/>-->
+    <!--        <input type="number" id="gx32" value="0"/>-->
+    <!--        <input type="number" id="gx33" value="-1"/>-->
+    <!--    </div>-->
+    <!--    <br/>-->
+    <!--    <p>G(y)=</p>-->
+    <!--    <div class="x">-->
+    <!--        <input type="number" id="gy11" value="1"/>-->
+    <!--        <input type="number" id="gy12" value="2"/>-->
+    <!--        <input type="number" id="gy13" value="1"/>-->
+    <!--        <br/>-->
+    <!--        <input type="number" id="gy21" value="0"/>-->
+    <!--        <input type="number" id="gy22" value="0"/>-->
+    <!--        <input type="number" id="gy23" value="0"/>-->
+    <!--        <br/>-->
+    <!--        <input type="number" id="gy31" value="-1"/>-->
+    <!--        <input type="number" id="gy32" value="-2"/>-->
+    <!--        <input type="number" id="gy33" value="-1"/>-->
+    <!--    </div>-->
+
+    <button class="mt-4" onclick="locTrungBinh()">Lọc trung bình</button>
+    <button class="mt-4" onclick="locTrungVi()">Lọc trung vị</button>
+    <button class="mt-4" onclick="solveSoble()">Soble</button>
+    <button class="mt-4" onclick="solvePrewitt()">Prewitt</button>
+    <hr/>
+
+    <div id="result">
+
+    </div>
+</div>
+<script>
+
+    const gxSoble = [
+        [1, 0, -1],
+        [2, 0, -2],
+        [1, 0, -1]
+    ]
+    const gySoble = [[1, 2, 1],
+        [0, 0, 0],
+        [-1, -2, -1]];
+
+    const gxPrewitt = [
+        [1, 0, -1],
+        [1, 0, -1],
+        [1, 0, -1]]
+
+    const gyPrewitt = [[1, 1, 1],
+        [0, 0, 0],
+        [-1, -1, -1]];
+
+    function solveSobleAndPrewit(gx, gy) {
+        let arr = [];
+        for (let i = 1; i <= 5; i++) {
+            let temp = [];
+            for (let j = 1; j <= 5; j++) {
+                temp.push(parseInt($(`#${i}${j}`).val()));
+            }
+            arr.push(temp);
+        }
+
+
+        let resultContent = '';
+        resultContent += '<h4>K(x) = </h4>';
+
+        for (let i = 0; i <= 2; i++) {
+            for (let j = 0; j <= 2; j++) {
+                resultContent += gx[i][j] + ' ';
+            }
+            resultContent += '<br />';
+        }
+
+        resultContent += '<h4>K(y) = </h4>';
+
+        for (let i = 0; i <= 2; i++) {
+            for (let j = 0; j <= 2; j++) {
+                resultContent += gy[i][j] + ' ';
+            }
+            resultContent += '<br />';
+        }
+
+        // Tính G(x) =
+        resultContent += '<h4>G(x) = </h4>';
+        let gxArr = [];
+        for (let i = 0; i <= 4; i++) {
+            gxArr[i] = [];
+            for (let j = 0; j <= 4; j++) {
+                resultContent += 'Gx(' + i + ',' + j + ')' + ' = ';
+                const leftValue = arr[i][j - 1] ? arr[i][j - 1] : 0;
+                const rightValue = arr[i][j + 1] ? arr[i][j + 1] : 0;
+                const topLeftValue = arr[i - 1] ? arr[i - 1][j - 1] ? arr[i - 1][j - 1] : 0 : 0;
+                const topRightValue = arr[i - 1] ? arr[i - 1][j + 1] ? arr[i - 1][j + 1] : 0 : 0;
+                const topValue = arr[i - 1] ? arr[i - 1][j] ? arr[i - 1][j] : 0 : 0;
+                const bottomValue = arr[i + 1] ? arr[i + 1][j] ? arr[i + 1][j] : 0 : 0;
+                const bottomRightValue = arr[i + 1] ? arr[i + 1][j + 1] ? arr[i + 1][j + 1] : 0 : 0;
+                const bottomLeftValue = arr[i + 1] ? arr[i + 1][j - 1] ? arr[i + 1][j - 1] : 0 : 0;
+                const currentValue = arr[i][j];
+
+                const total = topLeftValue * gx[0][0] + topValue * gx[0][1] + topRightValue * gx[0][2] + leftValue * gx[1][0] + currentValue * gx[1][1] + rightValue * gx[1][2] + bottomLeftValue * gx[2][0] + bottomValue * gx[2][1] + bottomRightValue * gx[2][2];
+                const totalAbs = Math.abs(total);
+                gxArr[i][j] = totalAbs;
+                // resultContent += `${topLeftValue} * ${gx[0][0]} + ${topValue} * ${gx[0][1]} + ${topRightValue} * ${gx[0][2]} + ${leftValue} * ${gx[1][0]} + ${currentValue} * ${gx[1][1]} + ${rightValue} * ${gx[1][2]} + ${bottomLeftValue} * ${gx[2][0]} + ${bottomValue} * ${gx[2][1]} + ${bottomRightValue} * ${gx[2][2]} = |${total}| = ${totalAbs} <br />`;
+                if (topLeftValue !== 0 && gx[0][0] !== 0) {
+                    resultContent += `${topLeftValue} * ${gx[0][0]} + `;
+                }
+                if (topValue !== 0 && gx[0][1] !== 0) {
+                    resultContent += `${topValue} * ${gx[0][1]} + `;
+                }
+                if (topRightValue && gx[0][2]) {
+                    resultContent += `${topRightValue} * ${gx[0][2]} + `;
+                }
+                if (leftValue && gx[1][0]) {
+                    resultContent += `${leftValue} * ${gx[1][0]} + `;
+                }
+                if (currentValue && gx[1][1]) {
+                    resultContent += `${currentValue} * ${gx[1][1]} + `;
+                }
+                if (rightValue && gx[1][2]) {
+                    resultContent += `${rightValue} * ${gx[1][2]} + `;
+                }
+                if (bottomLeftValue && gx[2][0]) {
+                    resultContent += `${bottomLeftValue} * ${gx[2][0]} + `;
+                }
+                if (bottomValue && gx[2][1]) {
+                    resultContent += `${bottomValue} * ${gx[2][1]} + `;
+                }
+                if (bottomRightValue && gx[2][2]) {
+                    resultContent += `${bottomRightValue} * ${gx[2][2]} + `;
+                }
+                resultContent += ` = |${total}| = ${totalAbs} <br />`;
+            }
+        }
+
+        resultContent += '<h4 style="margin-top: 10px;">G(y) = </h4>';
+        let gyArr = [];
+        for (let i = 0; i <= 4; i++) {
+            gyArr[i] = [];
+            for (let j = 0; j <= 4; j++) {
+                resultContent += 'G(y)(' + i + ',' + j + ')' + ' = ';
+                const leftValue = arr[i][j - 1] ? arr[i][j - 1] : 0;
+                const rightValue = arr[i][j + 1] ? arr[i][j + 1] : 0;
+                const topLeftValue = arr[i - 1] ? arr[i - 1][j - 1] ? arr[i - 1][j - 1] : 0 : 0;
+                const topRightValue = arr[i - 1] ? arr[i - 1][j + 1] ? arr[i - 1][j + 1] : 0 : 0;
+                const topValue = arr[i - 1] ? arr[i - 1][j] ? arr[i - 1][j] : 0 : 0;
+                const bottomValue = arr[i + 1] ? arr[i + 1][j] ? arr[i + 1][j] : 0 : 0;
+                const bottomRightValue = arr[i + 1] ? arr[i + 1][j + 1] ? arr[i + 1][j + 1] : 0 : 0;
+                const bottomLeftValue = arr[i + 1] ? arr[i + 1][j - 1] ? arr[i + 1][j - 1] : 0 : 0;
+                const currentValue = arr[i][j];
+
+                const total = topLeftValue * gy[0][0] + topValue * gy[0][1] + topRightValue * gy[0][2] + leftValue * gy[1][0] + currentValue * gy[1][1] + rightValue * gy[1][2] + bottomLeftValue * gy[2][0] + bottomValue * gy[2][1] + bottomRightValue * gy[2][2];
+                const totalAbs = Math.abs(total);
+                gyArr[i][j] = totalAbs;
+                if (topLeftValue !== 0 && gy[0][0] !== 0) {
+                    resultContent += `${topLeftValue} * ${gy[0][0]} + `;
+                }
+                if (topValue !== 0 && gy[0][1] !== 0) {
+                    resultContent += `${topValue} * ${gy[0][1]} + `;
+                }
+                if (topRightValue && gy[0][2]) {
+                    resultContent += `${topRightValue} * ${gy[0][2]} + `;
+                }
+                if (leftValue && gy[1][0]) {
+                    resultContent += `${leftValue} * ${gy[1][0]} + `;
+                }
+                if (currentValue && gy[1][1]) {
+                    resultContent += `${currentValue} * ${gy[1][1]} + `;
+                }
+                if (rightValue && gy[1][2]) {
+                    resultContent += `${rightValue} * ${gy[1][2]} + `;
+                }
+                if (bottomLeftValue && gy[2][0]) {
+                    resultContent += `${bottomLeftValue} * ${gy[2][0]} + `;
+                }
+                if (bottomValue && gy[2][1]) {
+                    resultContent += `${bottomValue} * ${gy[2][1]} + `;
+                }
+                if (bottomRightValue && gy[2][2]) {
+                    resultContent += `${bottomRightValue} * ${gy[2][2]} + `;
+                }
+                resultContent += ` = |${total}| = ${totalAbs} <br />`;
+            }
+        }
+
+
+        // Ma trận G(x) =
+        resultContent += '<h4 style="margin-top: 10px;">Ma trận G(x) = </h4>';
+
+        for (let i = 0; i <= 4; i++) {
+            for (let j = 0; j <= 4; j++) {
+                resultContent += gxArr[i][j] + ' ';
+            }
+            resultContent += '<br />';
+        }
+
+        // Ma trận G(x) =
+        resultContent += '<h4 style="margin-top: 10px;">Ma trận G(y) = </h4>';
+
+        for (let i = 0; i <= 4; i++) {
+            for (let j = 0; j <= 4; j++) {
+                resultContent += gyArr[i][j] + '\t';
+            }
+            resultContent += '<br />';
+        }
+
+        // Ma trận G =| GX + Gy| =
+        resultContent += `<h4 style="margin-top: 10px;"> Xác định đường biên cho cả 2 hướng x, y
+G = |Gx| + |Gy| =
+</h4>`;
+        let gArr = [];
+        for (let i = 0; i <= 4; i++) {
+            gArr[i] = [];
+            for (let j = 0; j <= 4; j++) {
+                gArr[i][j] = gxArr[i][j] + gyArr[i][j];
+            }
+        }
+
+        for (let i = 0; i <= 4; i++) {
+            for (let j = 0; j <= 4; j++) {
+                resultContent += gArr[i][j] + '\t';
+            }
+            resultContent += '<br />';
+        }
+
+        $('#result').html(resultContent);
+    }
+
+    function solveSoble(){
+        solveSobleAndPrewit(gxSoble, gySoble);
+    }
+
+    function solvePrewitt(){
+        solveSobleAndPrewit(gxPrewitt, gyPrewitt);
+    }
+
+    function locTrungBinh() {
+        let arr = [];
+        for (let i = 1; i <= 5; i++) {
+            let temp = [];
+            for (let j = 1; j <= 5; j++) {
+                temp.push(parseInt($(`#${i}${j}`).val()));
+            }
+            arr.push(temp);
+        }
+
+
+        let resultContent = '';
+        // Thực hiện lọc ảnh bằng bộ trung bình 3x3
+        resultContent += '<h4>B1. Thực hiện lọc ảnh bằng bộ trung bình 3x3</h4>';
+
+        let resultArr = [];
+        for (let i = 0; i <= 4; i++) {
+            resultArr[i] = [];
+            for (let j = 0; j <= 4; j++) {
+                resultContent += 'TB(' + i + ',' + j + ')' + ' = ';
+                const currentValue = arr[i][j];
+                const leftValue = arr[i][j - 1] ? arr[i][j - 1] : 0;
+                const rightValue = arr[i][j + 1] ? arr[i][j + 1] : 0;
+                const topLeftValue = arr[i - 1] ? arr[i - 1][j - 1] ? arr[i - 1][j - 1] : 0 : 0;
+                const topRightValue = arr[i - 1] ? arr[i - 1][j + 1] ? arr[i - 1][j + 1] : 0 : 0;
+                const topValue = arr[i - 1] ? arr[i - 1][j] ? arr[i - 1][j] : 0 : 0;
+                const bottomValue = arr[i + 1] ? arr[i + 1][j] ? arr[i + 1][j] : 0 : 0;
+                const bottomRightValue = arr[i + 1] ? arr[i + 1][j + 1] ? arr[i + 1][j + 1] : 0 : 0;
+                const bottomLeftValue = arr[i + 1] ? arr[i + 1][j - 1] ? arr[i + 1][j - 1] : 0 : 0;
+                const total = topLeftValue + topValue + topRightValue + leftValue + currentValue + rightValue + bottomLeftValue + bottomValue + bottomRightValue;
+                const result = total / 9;
+                resultContent += `(${topLeftValue} + ${topValue} + ${topRightValue} + ${leftValue} + ${currentValue} + ${rightValue} + ${bottomLeftValue} + ${bottomValue} + ${bottomRightValue}) / 9 = ${total} / 9 = ${result.toFixed(4)} = ${Math.round(result)} <br />`;
+                // resultContent += `${topLeftValue} ${topValue} ${topRightValue} <br />${leftValue} ${currentValue} ${rightValue} <br />${bottomLeftValue} ${bottomValue} ${bottomRightValue} <br />`;
+                resultArr[i][j] = Math.round(result);
+                resultContent += '<br />';
+            }
+        }
+        resultContent += '<h4>B2. Ma trận mới thu được từ bộ trung bình 3x3: </h4><br />';
+
+        for (let i = 0; i <= 4; i++) {
+            for (let j = 0; j <= 4; j++) {
+                resultContent += resultArr[i][j] + ' ';
+            }
+            resultContent += '<br />';
+        }
+        $('#result').html(resultContent);
+    }
+
+    function locTrungVi() {
+        let arr = [];
+        for (let i = 1; i <= 5; i++) {
+            let temp = [];
+            for (let j = 1; j <= 5; j++) {
+                temp.push(parseInt($(`#${i}${j}`).val()));
+            }
+            arr.push(temp);
+        }
+
+
+        let resultContent = '';
+        // Thực hiện lọc ảnh bằng bộ trung bình 3x3
+        resultContent += '<h4> B1. Thực hiện lọc ảnh bằng bộ trung vị 3x3</h4>';
+
+        let resultArr = [];
+        for (let i = 0; i <= 4; i++) {
+            resultArr[i] = [];
+            for (let j = 0; j <= 4; j++) {
+                resultContent += '(' + i + ',' + j + ')' + ' = ';
+                const currentValue = arr[i][j];
+                const leftValue = arr[i][j - 1] ? arr[i][j - 1] : 0;
+                const rightValue = arr[i][j + 1] ? arr[i][j + 1] : 0;
+                const topLeftValue = arr[i - 1] ? arr[i - 1][j - 1] ? arr[i - 1][j - 1] : 0 : 0;
+                const topRightValue = arr[i - 1] ? arr[i - 1][j + 1] ? arr[i - 1][j + 1] : 0 : 0;
+                const topValue = arr[i - 1] ? arr[i - 1][j] ? arr[i - 1][j] : 0 : 0;
+                const bottomValue = arr[i + 1] ? arr[i + 1][j] ? arr[i + 1][j] : 0 : 0;
+                const bottomRightValue = arr[i + 1] ? arr[i + 1][j + 1] ? arr[i + 1][j + 1] : 0 : 0;
+                const bottomLeftValue = arr[i + 1] ? arr[i + 1][j - 1] ? arr[i + 1][j - 1] : 0 : 0;
+
+                const array = [topLeftValue, topValue, topRightValue, leftValue, currentValue, rightValue, bottomLeftValue, bottomValue, bottomRightValue];
+                const sortedArray = array.sort((a, b) => a - b);
+                const middleValue = sortedArray[4];
+                resultArr[i][j] = middleValue;
+                for (let k = 0; k < array.length; k++) {
+                    if (k === 4) {
+                        resultContent += '<b style="color: red;">' + array[k] + '</b> ';
+                    } else {
+                        resultContent += array[k] + ' ';
+                    }
+                }
+                resultContent += '<br />';
+            }
+        }
+
+        resultContent += '<br /><h4>B2. Ma trận mới thu được từ bộ trung vị 3x3: </h4>';
+        for (let i = 0; i <= 4; i++) {
+            for (let j = 0; j <= 4; j++) {
+                resultContent += resultArr[i][j] + ' ';
+            }
+            resultContent += '<br />';
+        }
+        $('#result').html(resultContent);
+    }
+
+
+</script>
+
+</body>
+</html>
