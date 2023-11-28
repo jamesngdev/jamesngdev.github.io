@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LZW Matrix Compression</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<h2>LZW Matrix Compression</h2>
+<button onclick="compressMatrix()">Compress Matrix</button>
+
+<table id="compressionTable">
+    <thead>
+    <tr>
+        <th>Stt</th>
+        <th>Dãy hiện tại</th>
+        <th>Pixel kế tiếp</th>
+        <th>Đầu ra</th>
+        <th>Từ</th>
+        <th>Mã</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Compression steps will be dynamically added here -->
+    </tbody>
+</table>
+
+<script>
+    function compressMatrix() {
+        const matrix = [
+            ['A', 'B', 'A', 'B', 'A', 'B'],
+            ['A', 'B', 'A', 'B', 'A', 'B'],
+            ['A', 'B', 'A', 'B', 'A', 'B'],
+            // Add more rows as needed
+        ];
+
+        const compressionTableBody = document.getElementById('compressionTable').getElementsByTagName('tbody')[0];
+        compressionTableBody.innerHTML = ''; // Clear existing rows
+
+        const dictionary = {};
+        let currentSequence = '';
+        let output = '';
+        let currentCode = 256;
+        let stt = 1;
+
+        for (let i = 0; i < matrix.length; i++) {
+            for (let j = 0; j < matrix[i].length; j++) {
+                const currentPixel = matrix[i][j];
+                const currentSequenceWithPixel = currentSequence + currentPixel;
+
+                if (dictionary[currentSequenceWithPixel] !== undefined) {
+                    currentSequence = currentSequenceWithPixel;
+                } else {
+                    // Output the code for the current sequence
+                    output += dictionary[currentSequence] + ' ';
+
+                    // Add the new sequence to the dictionary
+                    dictionary[currentSequenceWithPixel] = currentCode++;
+
+                    // Add a new row to the table
+                    const newRow = compressionTableBody.insertRow();
+                    newRow.innerHTML = `<td>${stt++}</td><td>${currentSequence}</td><td>${currentPixel}</td><td>${output}</td><td>${currentSequenceWithPixel}</td><td>${dictionary[currentSequenceWithPixel]}</td>`;
+
+                    // Start a new sequence with the current pixel
+                    currentSequence = currentPixel;
+                }
+            }
+        }
+
+        // Output the code for the last sequence
+        output += dictionary[currentSequence];
+
+        // Add the last row to the table
+        const lastRow = compressionTableBody.insertRow();
+        lastRow.innerHTML = `<td>${stt++}</td><td>${currentSequence}</td><td></td><td>${output}</td><td></td><td>${dictionary[currentSequence]}</td>`;
+    }
+</script>
+</body>
+</html>

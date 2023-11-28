@@ -60,7 +60,7 @@
     <hr/>
 
     <br/>
-<!--    <p>G(x)=</p>-->
+    <!--    <p>G(x)=</p>-->
     <!--    <div class="x">-->
     <!--        <input type="number" id="gx11" value="1"/>-->
     <!--        <input type="number" id="gx12" value="0"/>-->
@@ -90,10 +90,11 @@
     <!--        <input type="number" id="gy33" value="-1"/>-->
     <!--    </div>-->
 
-    <button class="mt-4" onclick="locTrungBinh()">Lọc trung bình</button>
-    <button class="mt-4" onclick="locTrungVi()">Lọc trung vị</button>
-    <button class="mt-4" onclick="solveSoble()">Soble</button>
-    <button class="mt-4" onclick="solvePrewitt()">Prewitt</button>
+    <button class="mt-4 btn btn-primary" onclick="locTrungBinh()">Lọc trung bình</button>
+    <button class="mt-4 btn btn-primary" onclick="locTrungVi()">Lọc trung vị</button>
+    <button class="mt-4 btn btn-primary" onclick="solveSoble()">Soble</button>
+    <button class="mt-4 btn btn-primary" onclick="solvePrewitt()">Prewitt</button>
+    <button class="mt-4 btn btn-primary" onclick="solveLZW()">Lzw</button>
     <hr/>
 
     <div id="result">
@@ -101,6 +102,145 @@
     </div>
 </div>
 <script>
+
+
+    function solveLZW() {
+        let arr = [];
+        for (let i = 1; i <= 5; i++) {
+            let temp = [];
+            for (let j = 1; j <= 5; j++) {
+                temp.push(parseInt($(`#${i}${j}`).val()));
+            }
+            arr.push(temp);
+        }
+
+        let resultContent = '';
+        resultContent += '<h4>Bước 1: Chuyển ảnh I theo chiều ngang để tạo thành mảng 1 chiều như sau:</h4>';
+
+        console.log(">> arr", arr)
+        let verticalArr = [];
+        for (let i = 0; i <= 4; i++) {
+            for (let j = 0; j <= 4; j++) {
+                verticalArr.push(arr[i][j]);
+            }
+        }
+        resultContent += verticalArr.join('-') + '<br />';
+
+        resultContent += '<h4 class="mt-2">Bước 2: Xây dựng từ điển:</h4>';
+        resultContent += `<table class="table">
+                          <thead>
+                            <tr>
+                              <th scope="col">STT</th>
+                              <th scope="col">Dãy hiện tại</th>
+                              <th scope="col">Pixel kế tiếp</th>
+                              <th scope="col">Từ</th>
+                               <th scope="col">Mã</th>
+                               <th scope="col">Đầu ra</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <th scope="row">1</th>
+                              <td>Null</td>
+                              <td>${verticalArr[0]}</td>
+                              <td></td>
+                               <td></td>
+                                <td></td>
+                            </tr>
+`
+        let CODE_START = 258;
+        let currentCode = CODE_START;
+        const codeItem = {};
+
+        let length = verticalArr.length;
+        const maDaTrung = [];
+        const outputArr = [];
+
+        for (let i = 0; i < length - 1; i++) {
+            const ma = verticalArr[i] + '-' + verticalArr[i + 1];
+            const prevMa = verticalArr[i - 1] + '-' + verticalArr[i];
+
+            if (maDaTrung.includes(prevMa)) {
+                resultContent += `<tr>
+                              <th scope="row">${i + 2}</th>
+                              <td class="pixcel_hien_tai">${prevMa}</td>
+                              <td class="pixel_ke_tiep">${verticalArr[i + 1]}</td>
+                              <td class="from">${prevMa}-${verticalArr[i + 1]}</td>
+                              <td class="ma">${currentCode}</td>
+                              <td class="out">${prevMa}-(${codeItem[prevMa]})</td>
+                            </tr>`;
+                currentCode++;
+
+                outputArr.push(codeItem[prevMa]);
+
+                continue;
+
+            }
+            if (codeItem[ma]) {
+                maDaTrung.push(ma);
+                resultContent += `<tr>
+                              <th scope="row">${i + 2}</th>
+                              <td class="pixcel_hien_tai">${verticalArr[i]}</td>
+                              <td class="pixel_ke_tiep">${verticalArr[i + 1]}</td>
+                              <td class="from">${ma}</td>
+                              <td class="ma">Đã có mã (${codeItem[ma]})</td>
+                              <td class="out"></td>
+                            </tr>`;
+            } else {
+                codeItem[ma] = currentCode;
+                resultContent += `<tr>
+                              <th scope="row">${i + 2}</th>
+                              <td class="pixcel_hien_tai">${verticalArr[i]}</td>
+                              <td class="pixel_ke_tiep">${verticalArr[i + 1]}</td>
+                              <td class="from">${ma}</td>
+                              <td class="ma">${codeItem[ma]}</td>
+                              <td class="out">${verticalArr[i]}</td>
+                            </tr>`;
+                outputArr.push(verticalArr[i]);
+                currentCode++;
+            }
+        }
+
+        resultContent += `<tr>
+                              <th scope="row">${length + 1}</th>
+                              <td class="pixcel_hien_tai">${verticalArr[length - 1]}</td>
+                              <td class="pixel_ke_tiep">#</td>
+                              <td class="from">${verticalArr[length - 1]}</td>
+                              <td class="ma"></td>
+                              <td class="out">${verticalArr[length - 1]}</td>
+                            </tr>`;
+
+        outputArr.push(verticalArr[length - 1]);
+        resultContent += `</tbody></table>`;
+
+        resultContent += `<h3>Chuỗi mức xám của ảnh ban đầu sau khi nén như sau:</h3>`
+        let oneNumberCount = 0;
+        let twoNumberCount = 0;
+        for (let i = 0; i < outputArr.length; i++) {
+            if (outputArr[i] < 256) {
+                oneNumberCount++;
+                resultContent += outputArr[i] + ' - ';
+            } else {
+                twoNumberCount++;
+                resultContent += `(${outputArr[i]}) - `;
+            }
+        }
+        resultContent += `<br /> <h5>Dung lượng trước khi nén:</h5>`
+        resultContent += `<p>5*5*8 = 200 bit</p>`
+        resultContent += `<br /><h5>Dung lượng sau khi nén:</h5>`
+        const dungLuongSauKhiNen = oneNumberCount * 8 + twoNumberCount * 9;
+        const dungLuongTruocKhiNen = 200;
+        resultContent += `${oneNumberCount} * 8 + ${twoNumberCount} * 9 = ${dungLuongSauKhiNen} bit`
+
+        resultContent+= `<br /> <h5>Tỉ số nén:</h5>`
+        resultContent+= `Cr = ${dungLuongTruocKhiNen}/${dungLuongSauKhiNen} = ${(dungLuongTruocKhiNen/dungLuongSauKhiNen).toFixed(4)}`
+        resultContent+= `<br /> <h5>Dữ liệu dư thừa:</h5>`
+        const duLieuDuThua = 1 - (dungLuongSauKhiNen/dungLuongTruocKhiNen)
+        resultContent+= `Dr = 1 - ${dungLuongSauKhiNen}/${dungLuongTruocKhiNen} = ${(duLieuDuThua)} = ${(duLieuDuThua*100).toFixed(2)}%`
+        $('#result').html(resultContent);
+
+    }
+
 
     const gxSoble = [
         [1, 0, -1],
@@ -112,13 +252,14 @@
         [-1, -2, -1]];
 
     const gxPrewitt = [
-        [1, 0, -1],
-        [1, 0, -1],
-        [1, 0, -1]]
+        [-1, 0, 1],
+        [-1, 0, 1],
+        [-1, 0, 1]]
 
-    const gyPrewitt = [[1, 1, 1],
+    const gyPrewitt = [[-1, -1, -1],
         [0, 0, 0],
-        [-1, -1, -1]];
+        [1, 1, 1]];
+
 
     function solveSobleAndPrewit(gx, gy) {
         let arr = [];
@@ -295,11 +436,11 @@ G = |Gx| + |Gy| =
         $('#result').html(resultContent);
     }
 
-    function solveSoble(){
+    function solveSoble() {
         solveSobleAndPrewit(gxSoble, gySoble);
     }
 
-    function solvePrewitt(){
+    function solvePrewitt() {
         solveSobleAndPrewit(gxPrewitt, gyPrewitt);
     }
 
